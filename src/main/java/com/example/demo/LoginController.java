@@ -1,6 +1,13 @@
 package com.example.demo;
 
+import com.vk.api.sdk.client.VkApiClient;
+import com.vk.api.sdk.client.actors.UserActor;
+import com.vk.api.sdk.exceptions.ApiException;
+import com.vk.api.sdk.exceptions.ClientException;
+import com.vk.api.sdk.httpclient.HttpTransportClient;
 import com.vk.api.sdk.objects.UserAuthResponse;
+import com.vk.api.sdk.objects.fave.responses.GetPostsResponse;
+import com.vk.api.sdk.objects.wall.WallPostFull;
 import org.apache.http.client.utils.URIBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,8 +23,7 @@ import org.springframework.web.client.RestTemplate;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.List;
 
 @RestController
 @RequestMapping("api")
@@ -26,10 +32,13 @@ public class LoginController {
   private final String key = "31sxzWtetqBBYcIn4l2U";
   private final RestTemplate restTemplate;
   private final Logger log = LoggerFactory.getLogger(LoginController.class);
+  private final VkApiClient vk;
+
 
   @Autowired
   public LoginController(RestTemplate restTemplate) {
     this.restTemplate = restTemplate;
+    this.vk = new VkApiClient(new HttpTransportClient());
   }
 
 
@@ -42,7 +51,7 @@ public class LoginController {
     builder.addParameter("client_id", clientId.toString());
     builder.addParameter("display", "page");
     builder.addParameter("redirect_uri", "https://demoherokudeploy.herokuapp.com/api/callback");
-    builder.addParameter("scope", "notes");
+    builder.addParameter("scope", "notes,friends,wall,groups");
     builder.addParameter("response_type", "code");
     builder.addParameter("v", "5.92");
     log.info("url {}", builder.build().toString());
@@ -53,7 +62,7 @@ public class LoginController {
   @GetMapping("/callback")
   public void callback(@RequestParam(required = false) String code,
                        @RequestParam(required = false) String error,
-                       HttpServletResponse resp) throws IOException, URISyntaxException {
+                       HttpServletResponse resp) throws IOException, URISyntaxException, ClientException, ApiException {
     System.out.println(code);
     URIBuilder builder = new URIBuilder();
     builder.setScheme("https");
@@ -65,23 +74,43 @@ public class LoginController {
     builder.addParameter("code", code);
     builder.addParameter("v", "5.92");
     log.info("url {}", builder.build().toString());
-    ResponseEntity<UserAuthResponse> response = restTemplate.exchange(builder.build().toString(),
-        HttpMethod.POST, null, UserAuthResponse.class);
-    resp.sendRedirect("/info?token=" + response.getBody().getAccessToken() + "&user=" + response.getBody().getUserId());
+    UserAuthResponse response = vk.oauth().userAuthorizationCodeFlow(clientId, key,
+        "https://demoherokudeploy.herokuapp.com/api/callback", code).execute();
+    /*ResponseEntity<UserAuthResponse> response = restTemplate.exchange(builder.build().toString(),
+        HttpMethod.POST, null, UserAuthResponse.class);*/
+    resp.sendRedirect("/api/info?token=" + response.getAccessToken() + "&userIds=" + response.getUserId());
+  }
+
+  @GetMapping("/implicit")
+  public void token(@RequestParam String access_token, @RequestParam String user_id, HttpServletResponse resp) throws IOException {
+    resp.sendRedirect("/api/info?token=" + access_token + "&userIds=" + user_id);
   }
 
   @GetMapping("/info")
-  public ResponseEntity<String> getUser(@RequestParam String token, @RequestParam String user) {
-    RestTemplate restTemplate = new RestTemplate();
-    Map<String, String> vars = new HashMap<>();
-    vars.put("user_ids", user);
-    vars.put("client_secret", key);
-    vars.put("v", "5.92");
-    vars.put("access_token", token);
-    vars.put("fields", "bdate");
-    ResponseEntity<String> response = restTemplate.exchange("https://oauth.vk.com/users.get",
-        HttpMethod.GET, null, String.class, vars);
+  public ResponseEntity<String> getUser(@RequestParam String token, @RequestParam String userIds) throws URISyntaxException {
+    URIBuilder builder = new URIBuilder();
+    builder.setScheme("https");
+    builder.setHost("api.vk.com");
+    builder.setPath("method/users.get");
+    builder.addParameter("client_secret", key);
+    builder.addParameter("v", "5.92");
+    builder.addParameter("user_ids", userIds);
+    builder.addParameter("access_token", token);
+    builder.addParameter("fields", "bdate,photo_50,city,verified");
+    log.info("url {}", builder.build().toString());
+    ResponseEntity<String> response = restTemplate.exchange(builder.build().toString(),
+        HttpMethod.GET, null, String.class);
     return ResponseEntity.ok(response.getBody());
+  }
+
+  @GetMapping("/likes")
+  public ResponseEntity<List<WallPostFull>> getLikes(@RequestParam String token, @RequestParam Integer id) throws ClientException, ApiException {
+
+    UserActor userActor = new UserActor(id, token);
+    log.info("get likes {}", vk.fave().getPosts(userActor).extended(false));
+    GetPostsResponse response = vk.fave().getPosts(userActor).extended(false).execute();
+
+    return ResponseEntity.ok(response.getItems());
   }
 
   @GetMapping
