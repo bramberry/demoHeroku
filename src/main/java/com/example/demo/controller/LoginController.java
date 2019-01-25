@@ -4,14 +4,11 @@ import com.example.demo.domain.User;
 import com.example.demo.service.ParseUtil;
 import com.example.demo.service.UserService;
 import com.vk.api.sdk.client.VkApiClient;
-import com.vk.api.sdk.exceptions.ApiException;
-import com.vk.api.sdk.exceptions.ClientException;
 import com.vk.api.sdk.httpclient.HttpTransportClient;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.client.utils.URIBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -22,7 +19,9 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 
 @RestController
 @RequestMapping("api")
@@ -60,26 +59,34 @@ public class LoginController {
   }
 
   @GetMapping("/users")
-  public ResponseEntity<List<User>> getUsers() throws ClientException, ApiException, InterruptedException {
+  public ResponseEntity<List<User>> getUsers() throws InterruptedException {
     /*GetMembersResponse response = vk.groups().getMembers(new ServiceActor(clientId, APP_TOKEN))
         .groupId("pikabu").offset(0).count(500).execute();*/
 
-    List<User> items = new ArrayList<>();
-    for (int i = 0; i < 145; i++) {
+    HttpHeaders headers = new HttpHeaders();
+    headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
+    headers.setAcceptLanguage(Locale.LanguageRange.parse("en"));
+    headers.setCacheControl("max-age=0");
+    for (int i = 0; i < 149000; i += 1000) {
       ResponseEntity<String> response = restTemplate.exchange("https://api.vk.com/method/groups.getMembers?access_token="
-          + APP_TOKEN + "&offset=" + i +
-          "&count=500&group_id=belteanews&v=5.92&fields=relation,city,sex,bdate", HttpMethod.GET, null, String.class);
+              + APP_TOKEN + "&offset=" + i +
+              "&count=900&group_id=belteanews&v=5.92&fields=relation,city,sex,bdate", HttpMethod.GET,
+          new HttpEntity<>("parameters", headers), String.class);
       List<User> inputUsers = ParseUtil.parseString(response.getBody());
       userService.filter(inputUsers);
-      log.info("{} iteration, \n users get: {}", i, inputUsers.size());
-      Thread.sleep(2000);
+      log.info("{} iteration", inputUsers.size());
+      Thread.sleep(1000);
     }
-    return ResponseEntity.ok(items);
+    return ResponseEntity.ok(userService.getAll());
   }
 
   @GetMapping
-  public ResponseEntity<List<User>> get() {
-    return ResponseEntity.ok(userService.getAll());
+  public ResponseEntity<List<String>> get() {
+    List<String> links = new ArrayList<>();
+    userService.getAll().forEach(user -> {
+      links.add("https://vk.com/id" + user.getId());
+    });
+    return ResponseEntity.ok(links);
   }
 
   @GetMapping("delete")
@@ -90,7 +97,7 @@ public class LoginController {
 
 
   @GetMapping("/login")
-  public void login(HttpServletResponse resp) throws IOException, URISyntaxException {
+  public void login(HttpServletResponse resp) throws IOException {
     /*URIBuilder builder = new URIBuilder();
     builder.setScheme("https");
     builder.setHost("oauth.vk.com");

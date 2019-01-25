@@ -10,7 +10,6 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -24,28 +23,27 @@ public class UserServiceImpl implements UserService {
 
   @Override
   public void filter(List<User> users) {
-    List<User> filtered = users.stream().filter(user -> {
+    for (User user : users) {
+
       if (user.getCity() == null || user.getRelation() == null || user.getSex() == null || user.getBdate() == null) {
-        return false;
+
+        continue;
       }
       if (user.getCity().getId() != 282) {
-        return false;
+        continue;
       }
       if (user.getSex() != 2) {
-        return false;
+        continue;
       }
       if (user.getRelation() != 0 && user.getRelation() != 1 && user.getRelation() != 6) {
-        return false;
+        continue;
       }
       Long date = parseDate(user.getBdate());
       if (date < 631152000000L/*1990*/ || date > 788832000000L/*1994*/) {
-        return false;
+        continue;
       }
-      log.info("true");
-      return true;
-    }).collect(Collectors.toList());
-    if (filtered.size() > 0) {
-      saveAll(filtered);
+      log.info("user to save: {}", user);
+      userRepository.save(user);
     }
   }
 
@@ -71,7 +69,7 @@ public class UserServiceImpl implements UserService {
     try {
       date = dateFormat.parse(str);
     } catch (ParseException e) {
-      return 725760000000L;
+      return 0L;
     }
     return date.getTime();
   }
