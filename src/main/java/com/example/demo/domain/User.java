@@ -12,16 +12,18 @@ import org.springframework.data.annotation.Id;
 @Setter
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class User {
-  @Id
-  private Long id;
-  private Integer relation;
-  private Lookup city;
-  private Lookup country;
-  private Integer sex;
-  private String bdate;
-  private String domain;
-  @JsonProperty("first_name")
-  private String firstName;
-  @JsonProperty("last_name")
-  private String lastName;
+    @Id
+    private Integer id;
+    private Integer relation = 0;
+    private Lookup city;
+    private Integer sex;
+    @JsonProperty("is_closed")
+    private Boolean isClosed;
+    private String bdate;
+    private String domain;
+    @JsonProperty("first_name")
+    private String firstName;
+    @JsonProperty("last_name")
+    private String lastName;
+    private String groupName;
 }

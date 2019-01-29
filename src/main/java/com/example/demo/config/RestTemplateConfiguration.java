@@ -13,15 +13,15 @@ import org.springframework.web.client.RestTemplate;
 @Configuration
 public class RestTemplateConfiguration {
 
-  @Bean
-  public RestTemplate restTemplateWithIntercepter(
-      MappingJackson2HttpMessageConverter mappingJackson2HttpMessageConverter) {
-    RestTemplate restTemplate =
-        new RestTemplate(
-            new BufferingClientHttpRequestFactory(new SimpleClientHttpRequestFactory()));
+    @Bean
+    public RestTemplate restTemplateWithIntercepter(
+            MappingJackson2HttpMessageConverter mappingJackson2HttpMessageConverter) {
+        RestTemplate restTemplate =
+                new RestTemplate(
+                        new BufferingClientHttpRequestFactory(new SimpleClientHttpRequestFactory()));
 
-    restTemplate.getMessageConverters().add(mappingJackson2HttpMessageConverter);
+        restTemplate.getMessageConverters().add(mappingJackson2HttpMessageConverter);
 
-    return restTemplate;
-  }
+        return restTemplate;
+    }
 }

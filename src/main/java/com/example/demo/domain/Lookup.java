@@ -8,6 +8,6 @@ import lombok.Setter;
 @Getter
 @Setter
 public class Lookup {
-  private Integer id;
-  private String title;
+    private Integer id;
+    private String title;
 }
