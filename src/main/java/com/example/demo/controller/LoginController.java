@@ -5,8 +5,11 @@ import com.example.demo.domain.ParametrsDto;
 import com.example.demo.domain.User;
 import com.example.demo.service.GroupService;
 import com.example.demo.service.UserService;
+import com.vk.api.sdk.client.VkApiClient;
 import com.vk.api.sdk.exceptions.ApiException;
 import com.vk.api.sdk.exceptions.ClientException;
+import com.vk.api.sdk.httpclient.HttpTransportClient;
+import com.vk.api.sdk.objects.UserAuthResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.client.utils.URIBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -66,7 +69,7 @@ public class LoginController {
         return ResponseEntity.ok(users);
     }
 
-    @GetMapping("users")
+    @GetMapping("users/{group}")
     public ResponseEntity<List<String>> get(@PathVariable String group) {
         return ResponseEntity.ok(userService.findByGroupName(group)
                 .stream().map(User::getDomain).collect(Collectors.toList()));
@@ -86,19 +89,16 @@ public class LoginController {
 
     @GetMapping("/login")
     public void login(HttpServletResponse resp) throws IOException {
-    /*URIBuilder builder = new URIBuilder();
-    builder.setScheme("https");
-    builder.setHost("oauth.vk.com");
-    builder.setPath("authorize");
-    builder.addParameter("client_id", clientId.toString());
-    builder.addParameter("display", "popup");
-    builder.addParameter("redirect_uri", "https://demoherokudeploy.herokuapp.com/api/implicit?");
-    builder.addParameter("scope", "notes,friends,wall,groups");
-    builder.addParameter("response_type", "token");
-    builder.addParameter("v", "5.92");
-    builder.addParameter("revoke", "1");
-    log.info("url {}", builder.build().toString());
-    resp.sendRedirect(builder.build().toString());*/
-        resp.sendRedirect("/api/");
+        resp.sendRedirect("https://oauth.vk.com/authorize?client_id="
+                + AppConstants.CLIENT_ID.toString() + "&display=page&redirect_uri=" +
+                "https://demoherokudeploy.herokuapp.com/api/callback&scope=groups&response_type=code");
+    }
+
+    @GetMapping("/callback")
+    public ResponseEntity<UserAuthResponse> callback(@RequestParam String code) throws ClientException, ApiException {
+        final VkApiClient vk = new VkApiClient(new HttpTransportClient());
+        UserAuthResponse authResponse = vk.oauth().userAuthorizationCodeFlow(Integer.parseInt(AppConstants.CLIENT_ID.toString()),
+                AppConstants.SECRET_KEY.toString(), "https://demoherokudeploy.herokuapp.com/api/callback", code).execute();
+        return ResponseEntity.ok(authResponse);
     }
 }
