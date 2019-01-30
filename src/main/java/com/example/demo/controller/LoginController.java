@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("api")
@@ -55,19 +56,20 @@ public class LoginController {
     }
 
     @PostMapping("users")
-    public ResponseEntity<List<User>> getUsers(@RequestBody ParametrsDto dto) throws InterruptedException {
+    public ResponseEntity<List<User>> getUsers(@RequestBody ParametrsDto dto) {
         List<User> users = new ArrayList<>();
         try {
             users = groupService.loadMembers(dto);
-        } catch (ClientException | ApiException e) {
+        } catch (ClientException | ApiException | InterruptedException e) {
             ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
         return ResponseEntity.ok(users);
     }
 
     @GetMapping("users")
-    public ResponseEntity<List<User>> get(@RequestBody ParametrsDto dto) {
-        return ResponseEntity.ok(userService.findByGroupName(dto.getGroup()));
+    public ResponseEntity<List<String>> get(@PathVariable String group) {
+        return ResponseEntity.ok(userService.findByGroupName(group)
+                .stream().map(User::getDomain).collect(Collectors.toList()));
     }
 
     @GetMapping("delete")
