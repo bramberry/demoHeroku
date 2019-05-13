@@ -1,7 +1,7 @@
 package com.example.demo.domain;
 
 public enum AppConstants {
-    APP_TOKEN("08d10f884b375ba4ddd86da4fe3e94df4a31ae4c594ac5da8e33b75e2a577d108e0fe511370c255d65299"),
+    APP_TOKEN("e5327296ecb5eb4d99347a8c214078c96fc0a548cc7d5f2b443482d27bcbc4503d257e9bb22f9fb2256bc"),
     SECRET_KEY("QfDgRX80pcCCPXvLgyc4"),
     CLIENT_ID("6831567");
     private final String item;

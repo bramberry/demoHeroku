@@ -6,7 +6,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class ParametrsDto {
+public class ParametersDto {
     private Integer sex;
     private Integer relation;
     @JsonProperty("age_from")

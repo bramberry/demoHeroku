@@ -1,7 +1,7 @@
 package com.example.demo.controller;
 
 import com.example.demo.domain.AppConstants;
-import com.example.demo.domain.ParametrsDto;
+import com.example.demo.domain.ParametersDto;
 import com.example.demo.domain.User;
 import com.example.demo.service.GroupService;
 import com.example.demo.service.UserService;
@@ -59,7 +59,7 @@ public class LoginController {
     }
 
     @PostMapping("users")
-    public ResponseEntity<List<User>> getUsers(@RequestBody ParametrsDto dto) {
+    public ResponseEntity<List<User>> getUsers(@RequestBody ParametersDto dto) {
         List<User> users = new ArrayList<>();
         try {
             users = groupService.loadMembers(dto);

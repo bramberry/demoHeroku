@@ -1,7 +1,7 @@
 package com.example.demo.service;
 
 import com.example.demo.domain.AppConstants;
-import com.example.demo.domain.ParametrsDto;
+import com.example.demo.domain.ParametersDto;
 import com.example.demo.domain.User;
 import com.vk.api.sdk.client.VkApiClient;
 import com.vk.api.sdk.client.actors.ServiceActor;
@@ -29,7 +29,7 @@ public class GroupServiceImpl implements GroupService {
     private final VkApiClient vk = new VkApiClient(new HttpTransportClient());
 
     @Override
-    public List<User> loadMembers(ParametrsDto dto) throws InterruptedException, ClientException, ApiException {
+    public List<User> loadMembers(ParametersDto dto) throws InterruptedException, ClientException, ApiException {
         List<User> selectedUsers = new ArrayList<>();
         String groupTextName = dto.getGroup();
         dto.setGroup(getById(dto.getGroup()).getId().toString());
@@ -52,7 +52,7 @@ public class GroupServiceImpl implements GroupService {
                 , AppConstants.APP_TOKEN.toString())).fields(GroupField.MEMBERS_COUNT).groupId(group).execute().get(0);
     }
 
-    private String buildGetGroupMembersUrl(ParametrsDto dto, int i) {
+    private String buildGetGroupMembersUrl(ParametersDto dto, int i) {
         return "https://api.vk.com/method/users.search?"
                 + "access_token=" + AppConstants.APP_TOKEN
                 + "&offset=" + i + "&count=1000"
