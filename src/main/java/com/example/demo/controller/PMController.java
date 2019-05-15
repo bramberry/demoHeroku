@@ -37,10 +37,11 @@ public class PMController {
                     return;
                 }
                 String url = item.childNode(6).childNode(0).childNode(1).childNode(0).attr("href");
+                String time = item.childNode(6).childNode(0).childNode(0).childNode(0).toString();
                 try {
                     double value = getValue(BASE_URL + url);
                     if (value >= 2.65) {
-                        invents.add(new FootballInvent(BASE_URL + url, value));
+                        invents.add(new FootballInvent(BASE_URL + url, value, time));
                     }
                 } catch (IOException e) {
                     e.printStackTrace();

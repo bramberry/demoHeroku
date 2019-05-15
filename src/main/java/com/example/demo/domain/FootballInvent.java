@@ -8,4 +8,5 @@ import lombok.Data;
 public class FootballInvent {
     private String url;
     private Double value;
+    private String time;
 }
