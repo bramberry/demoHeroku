@@ -17,6 +17,7 @@ import java.util.List;
 @Slf4j
 public class ParseUtil {
     private static final ObjectMapper objectMapper = new ObjectMapper();
+    @SuppressWarnings("rawtypes")
     private static final TypeReference ref = new TypeReference<List<User>>() {
     };
     private static final DateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");

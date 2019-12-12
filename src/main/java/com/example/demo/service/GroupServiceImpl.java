@@ -62,6 +62,6 @@ public class GroupServiceImpl implements GroupService {
                 + "&sex=" + dto.getSex()
                 + "&city=" + dto.getCity()
                 + "&has_photo=" + dto.getHasPhoto()
-                + "&v=5.92&fields=relation,city,sex,bdate";
+                + "&v=5.103&fields=relation,city,sex,bdate,photo_max_orig";
     }
 }

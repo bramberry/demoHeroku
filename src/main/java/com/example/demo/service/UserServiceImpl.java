@@ -8,6 +8,7 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 
@@ -16,23 +17,26 @@ import java.util.stream.Collectors;
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
-    private final MongoTemplate mongoTemplate;
 
     @Autowired
-    public UserServiceImpl(UserRepository userRepository, MongoTemplate mongoTemplate) {
+    public UserServiceImpl(UserRepository userRepository) {
         this.userRepository = userRepository;
-        this.mongoTemplate = mongoTemplate;
     }
 
     @Override
     public List<User> filter(List<User> users, String groupName) {
-        users = users.stream().filter(user -> (user.getRelation() == 0 || user.getRelation() == 1
-                || user.getRelation() == 6) && !user.getIsClosed()).collect(Collectors.toList());
+        users = users.stream().filter(checkUserRelation())
+            .collect(Collectors.toList());
         ParseUtil.setAdditionalInfo(users, groupName);
         if (users.size() > 0) {
             saveAll(users);
         }
         return users;
+    }
+
+    private Predicate<User> checkUserRelation() {
+        return user -> (user.getRelation() == 0 || user.getRelation() == 1
+                || user.getRelation() == 6) && !user.getIsClosed();
     }
 
     @Override
