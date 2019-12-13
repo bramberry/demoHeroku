@@ -1,6 +1,6 @@
 package com.example.demo.service.util;
 
-import com.example.demo.domain.AppConstants;
+import com.example.demo.domain.enumirations.AppConstants;
 import org.apache.http.client.utils.URIBuilder;
 import org.springframework.web.bind.annotation.RequestParam;
 

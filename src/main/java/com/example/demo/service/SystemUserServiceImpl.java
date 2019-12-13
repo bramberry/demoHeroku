@@ -1,8 +1,8 @@
 package com.example.demo.service;
 
 import com.example.demo.domain.SystemUser;
+import com.example.demo.exception.SystemUserNotFoundException;
 import com.example.demo.repository.SystemUserRepository;
-import com.example.demo.service.exception.SystemUserServiceException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
@@ -45,12 +45,12 @@ public class SystemUserServiceImpl implements SystemUserService {
     @Override
     public SystemUser findByAccessToken(String token) {
         return systemUserRepository.findByAccessToken(token)
-                .orElseThrow(() -> new SystemUserServiceException("User not found"));
+                .orElseThrow(() -> new SystemUserNotFoundException("User not found"));
     }
 
     @Override
     public SystemUser findById(Integer id) {
         return systemUserRepository.findById(id)
-                .orElseThrow(() -> new SystemUserServiceException("User not found"));
+                .orElseThrow(() -> new SystemUserNotFoundException("User not found"));
     }
 }

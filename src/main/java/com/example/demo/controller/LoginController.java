@@ -1,7 +1,7 @@
 package com.example.demo.controller;
 
-import com.example.demo.domain.AppConstants;
 import com.example.demo.domain.SystemUser;
+import com.example.demo.domain.enumirations.AppConstants;
 import com.example.demo.service.SystemUserService;
 import com.example.demo.service.util.UrlBuilderUtil;
 import com.vk.api.sdk.client.VkApiClient;

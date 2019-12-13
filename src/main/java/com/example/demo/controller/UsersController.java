@@ -11,13 +11,11 @@ import lombok.extern.log4j.Log4j2;
 import org.apache.http.client.utils.URIBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
 import java.net.URISyntaxException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -47,17 +45,10 @@ public class UsersController {
         return response.getBody();
     }
 
-
-    @SuppressWarnings("MultiCatchCanBeSplit")
     @PostMapping
-    public List<VkUser> getUsers(@RequestBody ParametersDto dto) {
-        List<VkUser> vkUsers = new ArrayList<>();
-        try {
-            vkUsers = groupService.loadMembers(dto);
-        } catch (ClientException | ApiException | InterruptedException e) {
-            ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
-        }
-        return vkUsers;
+    public List<VkUser> getUsers(@RequestBody ParametersDto dto, @RequestParam String token)
+            throws InterruptedException, ClientException, ApiException {
+        return groupService.loadMembers(dto, token);
     }
 
     @GetMapping("{group}")

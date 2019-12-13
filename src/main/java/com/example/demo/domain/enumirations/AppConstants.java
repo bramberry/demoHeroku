@@ -1,4 +1,4 @@
-package com.example.demo.domain;
+package com.example.demo.domain.enumirations;
 
 public enum AppConstants {
     APP_TOKEN("9748413929dc2d7d61c8b764384c0d9370ef61cfcae35f42622cf65003faf77f4e7e0b68788d29ae55b23"),

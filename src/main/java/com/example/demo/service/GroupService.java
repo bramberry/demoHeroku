@@ -9,7 +9,7 @@ import com.vk.api.sdk.objects.groups.GroupFull;
 import java.util.List;
 
 public interface GroupService {
-  List<VkUser> loadMembers(ParametersDto dto) throws InterruptedException, ClientException, ApiException;
+  List<VkUser> loadMembers(ParametersDto dto, String token) throws InterruptedException, ClientException, ApiException;
 
     GroupFull getById(String group) throws ClientException, ApiException;
 }

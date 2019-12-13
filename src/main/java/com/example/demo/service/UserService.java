@@ -9,7 +9,7 @@ import java.util.List;
 public interface UserService {
   List<VkUser> filter(List<VkUser> vkUsers, String groupName) throws InterruptedException, ClientException, ApiException;
 
-  List<VkUser> saveAll(List<VkUser> vkUsers);
+  void saveAll(List<VkUser> vkUsers);
 
   List<VkUser> getAll();
 
