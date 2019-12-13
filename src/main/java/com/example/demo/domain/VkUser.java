@@ -7,7 +7,7 @@ import org.springframework.data.annotation.Id;
 
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class User {
+public class VkUser {
     @Id
     private Integer id;
     private Integer relation = 0;

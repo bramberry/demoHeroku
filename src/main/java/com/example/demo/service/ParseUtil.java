@@ -1,6 +1,6 @@
 package com.example.demo.service;
 
-import com.example.demo.domain.User;
+import com.example.demo.domain.VkUser;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -18,13 +18,13 @@ import java.util.List;
 public class ParseUtil {
     private static final ObjectMapper objectMapper = new ObjectMapper();
     @SuppressWarnings("rawtypes")
-    private static final TypeReference ref = new TypeReference<List<User>>() {
+    private static final TypeReference ref = new TypeReference<List<VkUser>>() {
     };
     private static final DateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
 
-    public static List<User> parseString(String obj) {
+    public static List<VkUser> parseString(String obj) {
 
-        List<User> users = new ArrayList<>();
+        List<VkUser> vkUsers = new ArrayList<>();
         try {
             ObjectNode on = objectMapper.readValue(obj, ObjectNode.class);
             JsonNode response = null;
@@ -32,12 +32,12 @@ public class ParseUtil {
                 response = on.get("response");
             }
             if (response != null && response.has("items")) {
-                users = objectMapper.readValue(response.get("items").toString(), ref);
+                vkUsers = objectMapper.readValue(response.get("items").toString(), ref);
             }
         } catch (IOException e) {
             log.error("users parse exception {}", e.getMessage());
         }
-        return users;
+        return vkUsers;
     }
 
     public static Integer parseResultCount(String obj) {
@@ -65,8 +65,8 @@ public class ParseUtil {
         }
     }
 
-    public static void setAdditionalInfo(List<User> users, String groupName) {
-        users.forEach(user -> {
+    public static void setAdditionalInfo(List<VkUser> vkUsers, String groupName) {
+        vkUsers.forEach(user -> {
             user.setDomain("https://vk.com/id" + user.getId());
             user.setGroupName(groupName);
         });

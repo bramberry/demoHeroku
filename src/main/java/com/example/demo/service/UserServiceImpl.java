@@ -1,10 +1,9 @@
 package com.example.demo.service;
 
-import com.example.demo.domain.User;
+import com.example.demo.domain.VkUser;
 import com.example.demo.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -24,29 +23,29 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<User> filter(List<User> users, String groupName) {
-        users = users.stream().filter(checkUserRelation())
-            .collect(Collectors.toList());
-        ParseUtil.setAdditionalInfo(users, groupName);
-        if (users.size() > 0) {
-            saveAll(users);
+    public List<VkUser> filter(List<VkUser> vkUsers, String groupName) {
+        vkUsers = vkUsers.stream().filter(checkUserRelation())
+                .collect(Collectors.toList());
+        ParseUtil.setAdditionalInfo(vkUsers, groupName);
+        if (!vkUsers.isEmpty()) {
+            saveAll(vkUsers);
         }
-        return users;
+        return vkUsers;
     }
 
-    private Predicate<User> checkUserRelation() {
+    private Predicate<VkUser> checkUserRelation() {
         return user -> (user.getRelation() == 0 || user.getRelation() == 1
                 || user.getRelation() == 6) && !user.getIsClosed();
     }
 
     @Override
-    public List<User> saveAll(List<User> users) {
-        log.info("users to save: {}", users.size());
-        return userRepository.saveAll(users);
+    public List<VkUser> saveAll(List<VkUser> vkUsers) {
+        log.info("users to save: {}", vkUsers.size());
+        return userRepository.saveAll(vkUsers);
     }
 
     @Override
-    public List<User> getAll() {
+    public List<VkUser> getAll() {
         return userRepository.findAll();
     }
 
@@ -56,7 +55,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<User> findByGroupName(String groupName) {
+    public List<VkUser> findByGroupName(String groupName) {
         return userRepository.findByGroupName(groupName);
     }
 

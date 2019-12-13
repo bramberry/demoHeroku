@@ -2,7 +2,7 @@ package com.example.demo.service;
 
 import com.example.demo.domain.AppConstants;
 import com.example.demo.domain.ParametersDto;
-import com.example.demo.domain.User;
+import com.example.demo.domain.VkUser;
 import com.vk.api.sdk.client.VkApiClient;
 import com.vk.api.sdk.client.actors.ServiceActor;
 import com.vk.api.sdk.exceptions.ApiException;
@@ -29,8 +29,8 @@ public class GroupServiceImpl implements GroupService {
     private final VkApiClient vk = new VkApiClient(new HttpTransportClient());
 
     @Override
-    public List<User> loadMembers(ParametersDto dto) throws InterruptedException, ClientException, ApiException {
-        List<User> selectedUsers = new ArrayList<>();
+    public List<VkUser> loadMembers(ParametersDto dto) throws InterruptedException, ClientException, ApiException {
+        List<VkUser> selectedVkUsers = new ArrayList<>();
         String groupTextName = dto.getGroup();
         dto.setGroup(getById(dto.getGroup()).getId().toString());
         ResponseEntity<String> countRes = restTemplate.exchange(buildGetGroupMembersUrl(dto, 0), HttpMethod.GET, null, String.class);
@@ -39,17 +39,17 @@ public class GroupServiceImpl implements GroupService {
             ResponseEntity<String> response =
                     restTemplate.exchange(buildGetGroupMembersUrl(dto, i),
                             HttpMethod.GET, null, String.class);
-            List<User> inputUsers = ParseUtil.parseString(response.getBody());
-            selectedUsers.addAll(userService.filter(inputUsers, groupTextName));
+            List<VkUser> inputVkUsers = ParseUtil.parseString(response.getBody());
+            selectedVkUsers.addAll(userService.filter(inputVkUsers, groupTextName));
             Thread.sleep(500);
         }
-        return selectedUsers;
+        return selectedVkUsers;
     }
 
     @Override
     public GroupFull getById(String group) throws ClientException, ApiException {
-        return vk.groups().getById(new ServiceActor(Integer.parseInt(AppConstants.CLIENT_ID.toString())
-                , AppConstants.APP_TOKEN.toString())).fields(GroupField.MEMBERS_COUNT).groupId(group).execute().get(0);
+        return vk.groups().getById(new ServiceActor(Integer.parseInt(AppConstants.CLIENT_ID.getValue())
+                , AppConstants.APP_TOKEN.getValue())).fields(GroupField.MEMBERS_COUNT).groupId(group).execute().get(0);
     }
 
     private String buildGetGroupMembersUrl(ParametersDto dto, int i) {
