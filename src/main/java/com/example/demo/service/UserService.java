@@ -1,5 +1,6 @@
 package com.example.demo.service;
 
+import com.example.demo.domain.ParametersDto;
 import com.example.demo.domain.VkUser;
 import com.vk.api.sdk.exceptions.ApiException;
 import com.vk.api.sdk.exceptions.ClientException;
@@ -15,7 +16,7 @@ public interface UserService {
 
     void deleteAll();
 
-  List<VkUser> findByGroupName(String groupName);
+  List<VkUser> findByGroupName(ParametersDto parameters);
 
     void delete(Integer id);
 }

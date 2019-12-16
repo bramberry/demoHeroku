@@ -10,7 +10,10 @@ import com.vk.api.sdk.exceptions.ClientException;
 import com.vk.api.sdk.objects.UserAuthResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -25,7 +28,7 @@ public class LoginController {
     private final SystemUserService systemUserService;
     private final VkApiClient vk;
 
-    @PostMapping
+    @GetMapping
     public void login(HttpServletResponse resp) throws IOException, URISyntaxException {
         resp.sendRedirect(UrlBuilderUtil.buildOauthRedirect().build().toString());
     }
@@ -46,6 +49,6 @@ public class LoginController {
                 .expiresIn(authResponse.getExpiresIn())
                 .build();
 
-        return systemUserService.save(user);
+        return systemUserService.update(user);
     }
 }

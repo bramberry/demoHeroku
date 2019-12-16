@@ -1,5 +1,6 @@
 package com.example.demo.service;
 
+import com.example.demo.domain.ParametersDto;
 import com.example.demo.domain.VkUser;
 import com.example.demo.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
@@ -7,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -57,8 +59,10 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<VkUser> findByGroupName(String groupName) {
-        return userRepository.findByGroupName(groupName);
+    public List<VkUser> findByGroupName(ParametersDto parameters) {
+
+
+        return new ArrayList<>();
     }
 
     @Override

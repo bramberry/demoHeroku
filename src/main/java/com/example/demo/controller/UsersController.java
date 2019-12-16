@@ -46,14 +46,14 @@ public class UsersController {
     }
 
     @PostMapping
-    public List<VkUser> getUsers(@RequestBody ParametersDto dto, @RequestParam String token)
+    public List<VkUser> getUsers(@RequestBody ParametersDto parameters, @RequestParam String token)
             throws InterruptedException, ClientException, ApiException {
-        return groupService.loadMembers(dto, token);
+        return groupService.loadMembers(parameters, token);
     }
 
-    @GetMapping("{group}")
-    public List<String> get(@PathVariable String group) {
-        return userService.findByGroupName(group)
+    @GetMapping("search")
+    public List<String> get(@RequestBody ParametersDto parameters) {
+        return userService.findByGroupName(parameters)
                 .stream().map(VkUser::getDomain).collect(Collectors.toList());
     }
 

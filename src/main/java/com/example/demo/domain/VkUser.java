@@ -11,7 +11,7 @@ public class VkUser {
     @Id
     private Integer id;
     private Integer relation = 0;
-    private Lookup city;
+    private City city;
     private Integer sex;
     @JsonProperty("is_closed")
     private Boolean isClosed;
