@@ -61,4 +61,4 @@ jobs:
         uses: mattdavis0351/actions/docker-gpr@v1
         with:
           repo-token: ${{ secrets.GITHUB_TOKEN }}
-          image-name: vkgirls-${{ github.sha }}:latest
+          image-name: vkgirls-${{ github.sha }}
